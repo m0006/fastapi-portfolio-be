@@ -1,0 +1,8 @@
+alembic==1.13.1
+asyncpg==0.29.0
+fastapi==0.110.1
+geoalchemy2[shapely]==0.14.7
+pydantic-extra-types==2.6.0
+python-dotenv==1.0.1
+sqlalchemy[asyncio]==2.0.29
+uvicorn==0.29.0
