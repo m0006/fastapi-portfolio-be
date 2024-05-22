@@ -23,7 +23,7 @@ async def is_taxi_table_empty(
 
 async def load_data(
         async_session: async_sessionmaker[AsyncSession]
-    ) -> dict[str, str]:
+    ) -> None:
 
     taxi_locations = []
     with open("data/taxi_data_subset_cleaned.csv", "r") as csv_file:
@@ -45,9 +45,6 @@ async def load_data(
         async with session.begin():
             session.add_all(taxi_locations)
             await session.commit()
-            return {"message": "Data loaded successfully"}
-
-    return {"message": "Data is already loaded"}
 
 
 async def async_main() -> None:
