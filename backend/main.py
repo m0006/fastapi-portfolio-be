@@ -15,7 +15,7 @@ TAXIMOVEMENT_TAG = "taxi_movement"
 
 DOCS_DESCRIPTION = """
     ## Notes:
-    - Dataset used for taxi_movement API: [Kaggle: Rome Taxi Data (subset)](https://www.kaggle.com/datasets/asjad99/rome-taxi-data-subset).\
+    - Dataset used and modified for taxi_movement API: [Kaggle: Rome Taxi Data (subset)](https://www.kaggle.com/datasets/asjad99/rome-taxi-data-subset).\
 """
 
 
