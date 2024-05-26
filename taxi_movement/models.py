@@ -2,7 +2,7 @@ from geoalchemy2 import Geometry, WKBElement
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from database import Base
+from db_common import Base
 
 
 class TaxiLocation(Base):
