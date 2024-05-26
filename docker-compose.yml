@@ -1,14 +1,15 @@
 services:
   be:
-    build: backend
+    build: .
     container_name: backend-container
     command: bash startup.sh
     ports:
       - "127.0.0.1:8000:10000" # TODO: For development only!
     environment:
-      - DB_URL=${DB_LANG}+${DB_DRIVER}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - TAXI_DB_URL=${DB_LANG}+${DB_DRIVER}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      - DOTENV_PATH=${DOTENV_PATH}
     volumes:
-      - ./backend:/code:cached # TODO: For development only!
+      - .:/code:cached # TODO: For development only!
     depends_on:
       db:
         condition: service_healthy
