@@ -9,7 +9,6 @@ from alembic import context
 
 from db_common import Base
 from taximovement.database import TAXI_DB_URL
-from taximovement.models import TaxiLocation
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
