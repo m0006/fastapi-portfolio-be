@@ -4,8 +4,8 @@ import csv
 from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from taxi_movement.database import async_taxi_session_maker
-from taxi_movement.models import TaxiLocation
+from taximovement.database import async_taxi_session_maker
+from taximovement.models import TaxiLocation
 
 
 async def is_taxi_table_empty(
@@ -26,7 +26,7 @@ async def load_data(
     ) -> None:
 
     taxi_locations = []
-    with open("taxi_movement/data/taxi_data_subset_cleaned.csv", "r") as csv_file:
+    with open("taximovement/data/taxi_data_subset_cleaned.csv", "r") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=",")
 
         # Skip the first row (header)

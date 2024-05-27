@@ -4,9 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import APIRouter, Depends, HTTPException, Path
 
-from taxi_movement.database import async_taxi_session_maker
-from taxi_movement.models import TaxiLocation
-from taxi_movement.schemas import TaxiIdSchema, TaxiLocationSchema
+from taximovement.database import async_taxi_session_maker
+from taximovement.models import TaxiLocation
+from taximovement.schemas import TaxiIdSchema, TaxiLocationSchema
 
 
 TAXIMOVEMENT_TAG = "taxi_movement"

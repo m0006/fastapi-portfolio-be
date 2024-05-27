@@ -3,7 +3,7 @@ import textwrap
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from taxi_movement import taxi_router
+from taximovement import taxi_router
 
 
 API_PREFIX = "/api/v1"
