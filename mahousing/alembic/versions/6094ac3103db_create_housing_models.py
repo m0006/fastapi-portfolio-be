@@ -1,8 +1,8 @@
 """create housing models
 
-Revision ID: ae1d52d54140
+Revision ID: 6094ac3103db
 Revises: 
-Create Date: 2024-05-27 21:23:03.572205
+Create Date: 2024-05-28 17:57:36.961607
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ae1d52d54140'
+revision: str = '6094ac3103db'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -37,7 +37,7 @@ def upgrade() -> None:
     sa.Column('comes_furnished', sa.Integer(), nullable=False),
     sa.Column('laundry_options', sa.String(length=20), nullable=False),
     sa.Column('parking_options', sa.String(length=20), nullable=False),
-    sa.Column('geom', geoalchemy2.types.Geometry(geometry_type='POINT', srid=4326, from_text='ST_GeomFromEWKT', name='geometry', nullable=False), nullable=False),
+    sa.Column('geom', geoalchemy2.types.Geometry(geometry_type='POINT', srid=26986, from_text='ST_GeomFromEWKT', name='geometry', nullable=False), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     # Removing:
@@ -45,6 +45,7 @@ def upgrade() -> None:
     op.create_table('mbtaline',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=25), nullable=False),
+    sa.Column('type', sa.String(length=15), nullable=False),
     sa.Column('geom', geoalchemy2.types.Geometry(geometry_type='MULTILINESTRING', srid=26986, from_text='ST_GeomFromEWKT', name='geometry', nullable=False), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -54,6 +55,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('line', sa.String(length=30), nullable=False),
+    sa.Column('type', sa.String(length=15), nullable=False),
     sa.Column('geom', geoalchemy2.types.Geometry(geometry_type='POINT', srid=26986, from_text='ST_GeomFromEWKT', name='geometry', nullable=False), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )

@@ -23,7 +23,6 @@ async def load_taxi_data(
         "taximovement/data/taxi_data_subset_cleaned.csv",
         create_taxi_location
     )
-
     await commit_record_list(async_session, taxi_locations, "location")
 
 

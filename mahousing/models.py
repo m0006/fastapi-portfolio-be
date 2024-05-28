@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from db_common import Base
 
 
-MBTA_SRID = 26986
+MA_SRID = 26986
 
 
 class HousingListing(Base):
@@ -30,7 +30,7 @@ class HousingListing(Base):
     parking_options: Mapped[str] = mapped_column(String(20))
 
     geom: Mapped[WKBElement] = mapped_column(
-        Geometry(geometry_type="POINT", srid=4326, spatial_index=True)
+        Geometry(geometry_type="POINT", srid=MA_SRID, spatial_index=True)
     )
 
     def __str__(self):
@@ -42,13 +42,14 @@ class MbtaLine(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(25))
+    type: Mapped[str] = mapped_column(String(15))
 
     geom: Mapped[WKBElement] = mapped_column(
-        Geometry(geometry_type="MULTILINESTRING", srid=MBTA_SRID, spatial_index=True)
+        Geometry(geometry_type="MULTILINESTRING", srid=MA_SRID, spatial_index=True)
     )
 
     def __str__(self):
-        return f"MbtaLine -- {self.name}"
+        return f"MbtaLine -- {self.type}: {self.name}"
 
 
 class MbtaStation(Base):
@@ -57,10 +58,11 @@ class MbtaStation(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
     line: Mapped[str] = mapped_column(String(30))
+    type: Mapped[str] = mapped_column(String(15))
 
     geom: Mapped[WKBElement] = mapped_column(
-        Geometry(geometry_type="POINT", srid=MBTA_SRID, spatial_index=True)
+        Geometry(geometry_type="POINT", srid=MA_SRID, spatial_index=True)
     )
 
     def __str__(self):
-        return f"MbtaStation -- {self.name} on {self.line} @ {self.geom}"
+        return f"MbtaStation -- {self.type}: {self.name} on {self.line} @ {self.geom}"

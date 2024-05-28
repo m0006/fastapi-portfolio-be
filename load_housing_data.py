@@ -47,7 +47,27 @@ def create_housing_listing(row: list) -> HousingListing:
         comes_furnished=int(row[11]),
         laundry_options=row[12],
         parking_options=row[13],
-        geom=f"POINT({row[15]} {row[14]})"
+        geom=f"POINT({row[14]} {row[15]})"
+    )
+
+
+def create_lines_record(feature: dict) -> MbtaLine:
+    return MbtaLine(
+        name=feature["properties"]["LINE"],
+        type=feature["properties"]["TYPE"],
+        geom=MultiLineString(
+            lines=feature["geometry"]["coordinates"]
+        ).wkt
+    )
+
+
+def create_station_record(feature: dict) -> MbtaStation:
+    coords = feature["geometry"]["coordinates"]
+    return MbtaStation(
+        name=feature["properties"]["STATION"],
+        line=feature["properties"]["LINE"],
+        type=feature["properties"]["TYPE"],
+        geom=f"POINT({coords[0]} {coords[-1]})"
     )
 
 
@@ -57,19 +77,10 @@ async def load_housing_listings(
 ) -> None:
 
     housing_listings = csv_loader(
-        f"{DATA_PATH_PREFIX}housing_ma_cleaned_clipped.csv",
+        f"{DATA_PATH_PREFIX}housing_cleaned_clipped_26986.csv",
         create_housing_listing
     )
     await commit_record_list(async_session, housing_listings, "listing")
-
-
-def create_lines_record(feature: dict) -> MbtaLine:
-    return MbtaLine(
-        name=feature["properties"]["LINE"],
-        geom=MultiLineString(
-            lines=feature["geometry"]["coordinates"]
-        ).wkt
-    )
 
 
 @run_with_model(MbtaLine)
@@ -83,15 +94,6 @@ async def load_mbta_lines(
             create_lines_record
         )
         await commit_record_list(async_session, mbta_lines, "line")
-
-
-def create_station_record(feature: dict) -> MbtaStation:
-    coords = feature["geometry"]["coordinates"]
-    return MbtaStation(
-        name=feature["properties"]["STATION"],
-        line=feature["properties"]["LINE"],
-        geom=f"POINT({coords[0]} {coords[-1]})"
-    )
 
 
 @run_with_model(MbtaStation)
