@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from taximovement import taxi_router
+from mahousing import housing_router
 
 
 API_PREFIX = "/api/v1"
@@ -30,5 +31,10 @@ app.add_middleware(
 
 app.include_router(
     taxi_router.router,
+    prefix=API_PREFIX
+)
+
+app.include_router(
+    housing_router.router,
     prefix=API_PREFIX
 )
