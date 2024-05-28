@@ -63,4 +63,4 @@ class MbtaStation(Base):
     )
 
     def __str__(self):
-        return f"MbtaStation -- {self.station_type}: {self.name} on {self.line} @ {self.geom}"
+        return f"MbtaStation -- {self.name} on {self.line} @ {self.geom}"
