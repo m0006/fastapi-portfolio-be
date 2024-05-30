@@ -26,8 +26,8 @@ class HousingListing(Base):
     electric_vehicle_charge: Mapped[int] = mapped_column(Integer)
     comes_furnished: Mapped[int] = mapped_column(Integer)
 
-    laundry_options: Mapped[str] = mapped_column(String(20))
-    parking_options: Mapped[str] = mapped_column(String(20))
+    laundry_options: Mapped[str] = mapped_column(String(20), nullable=True)
+    parking_options: Mapped[str] = mapped_column(String(20), nullable=True)
 
     geom: Mapped[WKBElement] = mapped_column(
         Geometry(geometry_type="POINT", srid=MA_SRID, spatial_index=True)

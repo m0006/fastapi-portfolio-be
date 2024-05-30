@@ -45,8 +45,8 @@ def create_housing_listing(row: list) -> HousingListing:
         wheelchair_access=int(row[9]),
         electric_vehicle_charge=int(row[10]),
         comes_furnished=int(row[11]),
-        laundry_options=row[12],
-        parking_options=row[13],
+        laundry_options=row[12] if row[12] else None,
+        parking_options=row[13] if row[13] else None,
         geom=f"POINT({row[14]} {row[15]})"
     )
 

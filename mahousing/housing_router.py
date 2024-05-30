@@ -2,20 +2,29 @@ from typing import Any, AsyncGenerator
 from operator import ge, le
 from geoalchemy2.functions import ST_DWithin, ST_Point
 from pydantic import BaseModel
-from sqlalchemy import and_, select
+from sqlalchemy import and_, distinct, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import APIRouter, Depends
 
 from mahousing.database import async_housing_session_maker
 from mahousing.models import HousingListing, MA_SRID, MbtaLine, MbtaStation
-from mahousing.schemas import ListingSchema, MbtaLineSchema, MbtaStationSchema
+from mahousing.schemas import (
+    HousingAttribValSchema,
+    ListingSchema,
+    MbtaLineSchema,
+    MbtaStationSchema
+)
 
 
 MAHOUSING_TAG = "ma_housing"
 MAHOUSING_PREFIX = "/" + MAHOUSING_TAG
 
 DIV_MI_TO_METER = 0.0006213712
+
+PRICE_FIELD_PREFIX = "price_"
+SQFEET_FIELD_PREFIX = "sqfeet_"
+SPLIT_ON_CHAR = "_"
 
 
 router = APIRouter(
@@ -97,6 +106,42 @@ async def get_all_mbta_stations(
     return stations
 
 
+@router.get("/housing_attrib_vals", response_model=HousingAttribValSchema)
+async def get_housing_attrib_vals(
+    db_session: AsyncSession = Depends(get_async_housing_session)
+) -> Any:
+
+    val_schema_dict = {}
+
+    for field in HousingAttribValSchema.model_fields.keys():
+
+        if field.startswith((PRICE_FIELD_PREFIX, SQFEET_FIELD_PREFIX)):
+            # Create query for max col value:
+            field_prefix = field.split(SPLIT_ON_CHAR)[0]
+            attrib = getattr(HousingListing, field_prefix)
+
+            val_query = select(attrib).order_by(
+                attrib.desc()
+            ).fetch(1)
+
+            result = await db_session.execute(val_query)
+            val_schema_dict[field] = result.scalars().one()
+
+        else:
+            # Create query for distinct col values:
+            attrib = getattr(HousingListing, field)
+            val_query = select(
+                distinct(attrib)
+            ).where(
+                attrib.isnot(None)
+            ).order_by(attrib)
+
+            result = await db_session.execute(val_query)
+            val_schema_dict[field] = result.scalars().all()
+
+    return HousingAttribValSchema(**val_schema_dict)
+
+
 @router.post("/get_housing_listings", response_model=list[ListingSchema])
 async def get_listings_by_query(
     query: CombinedOptionsQuery,
@@ -147,8 +192,8 @@ async def get_listings_by_query(
         for field in housing_dict.keys():
             if housing_dict[field]:
 
-                if field.startswith("price_") or field.startswith("sqfeet_"):
-                    field_prefix, field_suffix = field.split("_")
+                if field.startswith((PRICE_FIELD_PREFIX, SQFEET_FIELD_PREFIX)):
+                    field_prefix, field_suffix = field.split(SPLIT_ON_CHAR)
 
                     comparison_op = le if field_suffix == "max" else ge
                     filter_list.append(
@@ -166,8 +211,10 @@ async def get_listings_by_query(
     # If multiple where statements, use 'and_', else just use 'where'
     if len(filter_list) > 1:
         listings_query = listings_query.where(and_(*filter_list))
+    elif len(filter_list) == 1:
+        listings_query = listings_query.where(filter_list[0])
     else:
-        listings_query = listings_query.where(filter_list.pop())
+        return []
 
     result = await db_session.execute(listings_query)
     listings = result.scalars().all()

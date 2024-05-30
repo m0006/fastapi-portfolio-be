@@ -1,8 +1,8 @@
 """create housing models
 
-Revision ID: 6094ac3103db
+Revision ID: 15b3c760c91e
 Revises: 
-Create Date: 2024-05-28 17:57:36.961607
+Create Date: 2024-05-30 14:20:17.457547
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6094ac3103db'
+revision: str = '15b3c760c91e'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -35,8 +35,8 @@ def upgrade() -> None:
     sa.Column('wheelchair_access', sa.Integer(), nullable=False),
     sa.Column('electric_vehicle_charge', sa.Integer(), nullable=False),
     sa.Column('comes_furnished', sa.Integer(), nullable=False),
-    sa.Column('laundry_options', sa.String(length=20), nullable=False),
-    sa.Column('parking_options', sa.String(length=20), nullable=False),
+    sa.Column('laundry_options', sa.String(length=20), nullable=True),
+    sa.Column('parking_options', sa.String(length=20), nullable=True),
     sa.Column('geom', geoalchemy2.types.Geometry(geometry_type='POINT', srid=26986, from_text='ST_GeomFromEWKT', name='geometry', nullable=False), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )

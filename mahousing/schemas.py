@@ -15,7 +15,26 @@ class PointToJson:
         }
 
 
+class HousingAttribValSchema(BaseModel):
+    """
+    Schema to get option values for frontend components.
+    """
+
+    region:             list[str]
+    type:               list[str]
+    price_max:          int
+    sqfeet_max:         int
+    beds:               list[int]
+    baths:              list[float]
+    laundry_options:    list[str]
+    parking_options:    list[str]
+
+
 class ListingSchema(BaseModel, PointToJson):
+    """
+    Schema for listings resulting from querying.
+    """
+
     region: str
     price: int
     type: str
