@@ -30,11 +30,11 @@ app.add_middleware(
 )
 
 app.include_router(
-    taxi_router.router,
+    housing_router.router,
     prefix=API_PREFIX
 )
 
 app.include_router(
-    housing_router.router,
+    taxi_router.router,
     prefix=API_PREFIX
 )
