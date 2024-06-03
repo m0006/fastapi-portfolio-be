@@ -77,7 +77,7 @@ async def load_housing_listings(
 ) -> None:
 
     housing_listings = csv_loader(
-        f"{DATA_PATH_PREFIX}housing_cleaned_clipped_26986.csv",
+        f"{DATA_PATH_PREFIX}housing_cleaned_clipped_4326.csv",
         create_housing_listing
     )
     await commit_record_list(async_session, housing_listings, "listing")
@@ -88,7 +88,7 @@ async def load_mbta_lines(
     async_session: async_sessionmaker[AsyncSession]
 ) -> None:
 
-    for filename in ("commrail_line_26986", "transit_line_26986"):
+    for filename in ("commrail_line_4326", "transit_line_4326"):
         mbta_lines = geojson_loader(
             f"{DATA_PATH_PREFIX}{filename}{GEOJSON_EXT}",
             create_lines_record
@@ -101,7 +101,7 @@ async def load_mbta_stations(
     async_session: async_sessionmaker[AsyncSession]
 ) -> None:
 
-    for filename in ("commrail_point_26986", "transit_point_26986"):
+    for filename in ("commrail_point_4326", "transit_point_4326"):
         mbta_stations = geojson_loader(
             f"{DATA_PATH_PREFIX}{filename}{GEOJSON_EXT}",
             create_station_record

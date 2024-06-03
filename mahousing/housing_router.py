@@ -1,6 +1,6 @@
 from typing import Any, AsyncGenerator
 from operator import ge, le
-from geoalchemy2.functions import ST_DWithin, ST_Point
+from geoalchemy2.functions import ST_DWithin, ST_Point, ST_Transform
 from pydantic import BaseModel
 from sqlalchemy import and_, distinct, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends
 
 from mahousing.database import async_housing_session_maker
-from mahousing.models import HousingListing, MA_SRID, MbtaLine, MbtaStation
+from mahousing.models import HousingListing, SRID, MbtaLine, MbtaStation
 from mahousing.schemas import (
     HousingAttribValSchema,
     ListingSchema,
@@ -21,6 +21,8 @@ MAHOUSING_TAG = "ma_housing"
 MAHOUSING_PREFIX = "/" + MAHOUSING_TAG
 
 DIV_MI_TO_METER = 0.0006213712
+
+MA_SRID = 26986
 
 PRICE_FIELD_PREFIX = "price_"
 SQFEET_FIELD_PREFIX = "sqfeet_"
@@ -151,7 +153,7 @@ async def get_listings_by_query(
     if not any(
         (query.dict()[field] for field in query.model_fields.keys())
     ):
-        return []
+        listings_query = select(HousingListing)
 
     # initialize query and potential filter list:
     listings_query = select(HousingListing)
@@ -162,10 +164,10 @@ async def get_listings_by_query(
         filter_list.append(
             (
                 ST_DWithin(
-                    HousingListing.geom,
-                    select(MbtaStation.geom).where(
+                    ST_Transform(HousingListing.geom, MA_SRID),
+                    select(ST_Transform(MbtaStation.geom, MA_SRID)).where(
                         MbtaStation.name == query.mbta_station_query.name
-                    ).scalar_subquery(),
+                    ).fetch(1).scalar_subquery(),
                     query.mbta_station_query.dist_mi / DIV_MI_TO_METER
                 )
             )
@@ -175,10 +177,13 @@ async def get_listings_by_query(
         filter_list.append(
             (
                 ST_DWithin(
-                    HousingListing.geom,
-                    ST_Point(
-                        query.point_dist_query.x,
-                        query.point_dist_query.y,
+                    ST_Transform(HousingListing.geom, MA_SRID),
+                    ST_Transform(
+                        ST_Point(
+                            query.point_dist_query.x,
+                            query.point_dist_query.y,
+                            SRID
+                        ),
                         MA_SRID
                     ),
                     query.point_dist_query.dist_mi / DIV_MI_TO_METER
@@ -214,7 +219,7 @@ async def get_listings_by_query(
     elif len(filter_list) == 1:
         listings_query = listings_query.where(filter_list[0])
     else:
-        return []
+        listings_query = select(HousingListing)
 
     result = await db_session.execute(listings_query)
     listings = result.scalars().all()

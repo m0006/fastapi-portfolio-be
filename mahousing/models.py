@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from db_common import Base
 
 
-MA_SRID = 26986
+SRID = 4326
 
 
 class HousingListing(Base):
@@ -30,7 +30,7 @@ class HousingListing(Base):
     parking_options: Mapped[str] = mapped_column(String(20), nullable=True)
 
     geom: Mapped[WKBElement] = mapped_column(
-        Geometry(geometry_type="POINT", srid=MA_SRID, spatial_index=True)
+        Geometry(geometry_type="POINT", srid=SRID, spatial_index=True)
     )
 
     def __str__(self):
@@ -45,7 +45,7 @@ class MbtaLine(Base):
     type: Mapped[str] = mapped_column(String(15))
 
     geom: Mapped[WKBElement] = mapped_column(
-        Geometry(geometry_type="MULTILINESTRING", srid=MA_SRID, spatial_index=True)
+        Geometry(geometry_type="MULTILINESTRING", srid=SRID, spatial_index=True)
     )
 
     def __str__(self):
@@ -61,7 +61,7 @@ class MbtaStation(Base):
     type: Mapped[str] = mapped_column(String(15))
 
     geom: Mapped[WKBElement] = mapped_column(
-        Geometry(geometry_type="POINT", srid=MA_SRID, spatial_index=True)
+        Geometry(geometry_type="POINT", srid=SRID, spatial_index=True)
     )
 
     def __str__(self):
