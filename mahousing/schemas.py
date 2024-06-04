@@ -34,7 +34,7 @@ class ListingSchema(BaseModel, PointToJson):
     """
     Schema for listings resulting from querying.
     """
-
+    id: int
     region: str
     price: int
     type: str
@@ -59,7 +59,7 @@ class MbtaLineSchema(BaseModel):
     name: str
     type: str
 
-    geom: dict[str, list[list[list[float]]]]
+    geom: dict[str, str | list]
 
     @field_validator("geom", mode="before")
     def turn_multiline_to_json(cls, value):
@@ -70,6 +70,7 @@ class MbtaLineSchema(BaseModel):
         )
 
         return {
+            "type": "MultiLineString",
             "coordinates": geojson["coordinates"]
         }
 
