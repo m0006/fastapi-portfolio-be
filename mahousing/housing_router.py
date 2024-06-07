@@ -1,6 +1,6 @@
 from typing import Any, AsyncGenerator
 from operator import ge, le
-from geoalchemy2.functions import ST_DWithin, ST_Point, ST_Transform
+from geoalchemy2.functions import ST_DWithin, ST_Transform
 from pydantic import BaseModel
 from sqlalchemy import and_, distinct, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends
 
 from mahousing.database import async_housing_session_maker
-from mahousing.models import HousingListing, SRID, MbtaLine, MbtaStation
+from mahousing.models import HousingListing, MbtaLine, MbtaStation
 from mahousing.schemas import (
     HousingAttribValSchema,
     ListingSchema,
@@ -61,16 +61,9 @@ class MbtaStationQuery(BaseModel):
     dist_mi:    float
 
 
-class PointDistQuery(BaseModel):
-    x:          float
-    y:          float
-    dist_mi:    float
-
-
 class CombinedOptionsQuery(BaseModel):
     housing_query:          HousingQuery | None = None
     mbta_station_query:     MbtaStationQuery | None = None
-    point_dist_query:       PointDistQuery | None = None
 
 
 async def get_async_housing_session() -> AsyncGenerator[AsyncSession, None]:
@@ -173,29 +166,11 @@ async def get_listings_by_query(
             )
         )
 
-    if query.point_dist_query:
-        filter_list.append(
-            (
-                ST_DWithin(
-                    ST_Transform(HousingListing.geom, MA_SRID),
-                    ST_Transform(
-                        ST_Point(
-                            query.point_dist_query.x,
-                            query.point_dist_query.y,
-                            SRID
-                        ),
-                        MA_SRID
-                    ),
-                    query.point_dist_query.dist_mi / DIV_MI_TO_METER
-                )
-            )
-        )
-
     if query.housing_query:
         housing_dict = query.housing_query.dict()
 
         for field in housing_dict.keys():
-            if housing_dict[field] != None:
+            if housing_dict[field] is not None:
 
                 if field.startswith((PRICE_FIELD_PREFIX, SQFEET_FIELD_PREFIX)):
                     field_prefix, field_suffix = field.split(SPLIT_ON_CHAR)
