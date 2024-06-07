@@ -100,7 +100,7 @@ async def get_all_mbta_stations(
 
     stations_query = select(
         MbtaStation
-    ).order_by(MbtaStation.type, MbtaStation.line, MbtaStation.name)
+    ).order_by(MbtaStation.name)
 
     result = await db_session.execute(stations_query)
     stations = result.scalars().all()
@@ -195,7 +195,7 @@ async def get_listings_by_query(
         housing_dict = query.housing_query.dict()
 
         for field in housing_dict.keys():
-            if housing_dict[field]:
+            if housing_dict[field] != None:
 
                 if field.startswith((PRICE_FIELD_PREFIX, SQFEET_FIELD_PREFIX)):
                     field_prefix, field_suffix = field.split(SPLIT_ON_CHAR)
