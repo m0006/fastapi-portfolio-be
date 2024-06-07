@@ -17,7 +17,7 @@ from mahousing.schemas import (
 )
 
 
-MAHOUSING_TAG = "ma_housing"
+MAHOUSING_TAG = "housing_app"
 MAHOUSING_PREFIX = "/" + MAHOUSING_TAG
 
 DIV_MI_TO_METER = 0.0006213712
