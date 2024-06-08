@@ -65,6 +65,25 @@ class CombinedOptionsQuery(BaseModel):
     housing_query:          HousingQuery | None = None
     mbta_station_query:     MbtaStationQuery | None = None
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "housing_query": {
+                        "type": "apartment",
+                        "beds": 1,
+                        "baths": 1,
+                        "dogs_allowed": 1
+                    },
+                    "mbta_station_query": {
+                        "name": "Downtown Crossing",
+                        "dist_mi": 1.0
+                    }
+                }
+            ]
+        }
+    }
+
 
 async def get_async_housing_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_housing_session_maker() as session:
