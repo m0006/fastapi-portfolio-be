@@ -8,13 +8,13 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from db_common import Base
-from taximovement.database import TAXI_DB_URL
-from taximovement.models import TaxiLocation
+from mahousing.database import HOUSING_DB_URL
+from mahousing.models import HousingListing, MbtaLine, MbtaStation
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-config.set_main_option('sqlalchemy.url', TAXI_DB_URL)
+config.set_main_option('sqlalchemy.url', HOUSING_DB_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

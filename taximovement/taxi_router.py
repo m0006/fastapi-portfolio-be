@@ -1,4 +1,4 @@
-from typing import Annotated, AsyncGenerator
+from typing import Annotated, Any, AsyncGenerator
 from sqlalchemy import select, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,13 +24,10 @@ async def get_async_taxi_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-@router.get(
-    "/taxi_ids",
-    response_model=list[TaxiIdSchema]
-)
+@router.get("/taxi_ids", response_model=list[TaxiIdSchema])
 async def get_driver_ids(
-        db_session: AsyncSession = Depends(get_async_taxi_session)
-    ):
+    db_session: AsyncSession = Depends(get_async_taxi_session)
+) -> Any:
     taxi_id_query = select(
         distinct(TaxiLocation.driver_id)
     ).order_by(TaxiLocation.driver_id)
@@ -49,16 +46,16 @@ async def get_driver_ids(
     response_model=list[TaxiLocationSchema]
 )
 async def get_locations_for_driver(
-        driver_id: Annotated[
-            int,
-            Path(
-                title="The ID of the Taxi Driver to get",
-                gt=0,
-                lt=400
-            )
-        ],
-        db_session: AsyncSession = Depends(get_async_taxi_session)
-    ):
+    driver_id: Annotated[
+        int,
+        Path(
+            title="The ID of the Taxi Driver to get",
+            gt=0,
+            lt=400
+        )
+    ],
+    db_session: AsyncSession = Depends(get_async_taxi_session)
+) -> Any:
 
     taxi_loc_query = select(TaxiLocation).where(
         TaxiLocation.driver_id == driver_id
