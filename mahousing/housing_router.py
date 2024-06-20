@@ -162,11 +162,6 @@ async def get_listings_by_query(
     db_session: AsyncSession = Depends(get_async_housing_session)
 ) -> Any:
 
-    if not any(
-        (query.dict()[field] for field in query.model_fields.keys())
-    ):
-        listings_query = select(HousingListing)
-
     # initialize query and potential filter list:
     listings_query = select(HousingListing)
 
@@ -212,8 +207,6 @@ async def get_listings_by_query(
         listings_query = listings_query.where(and_(*filter_list))
     elif len(filter_list) == 1:
         listings_query = listings_query.where(filter_list[0])
-    else:
-        listings_query = select(HousingListing)
 
     result = await db_session.execute(listings_query)
     listings = result.scalars().all()
